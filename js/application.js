@@ -1,62 +1,63 @@
 'use strict';
 
 $(document).ready(function(){
-  var Charts = function (){
+  var Charts = function(){ // defining class
     this.graphData = [];
   };
-  //1. Get Data
-  Charts.prototype.makeAjaxRequest = function (){
-    $.ajax({
-      context: this, //if use this, add context or it will break 
-      type: 'GET',
-      url: 'https://www.quandl.com/api/v1/datasets/BTS_MM/RETAILGAS.json?auth_token=E6kNzExHjay2DNP8pKvB',
-      success: function(response){
 
-        // 2. data wrangling
-        var items = response.data; //data is one of the key of the whole response
-        var item; //definded here so it's not a local variable within the for loop 
-        
-        //to transform big array into an array of hashes key value (x, y)
-        for (var i=0; i < items.length; i++){
+  //1. grabbing the data
+  Charts.prototype.makeAjaxRequest = function(){
+    $.ajax({
+      context: this,
+      type: 'GET',
+      url: 'https://www.quandl.com/api/v1/datasets/WORLDBANK/HKG_IT_CEL_SETS_P2.json?auth_token=E6kNzExHjay2DNP8pKvB',
+      success: function(response){
+        // console.log(response.data);
+
+        //2. data wranggling
+        var items = response.data;
+        var item; 
+
+        for (var i = 0; i <items.length; i++){
             item = items[i];
             this.graphData.push({
               x: new Date(item[0]),
               y: item[1]
-            }); 
-          }
+            });
+            // console.log(this.graphData);
+        };
 
-          console.log(this.graphData);
-          this.graphChart();
+        console.log(this.graphData);
+        this.graphChart();
       }
-    });
-  }; //close makeAjaxRequest
+    }); //end of ajax
+  }//end of makeAjaxRequest
+
 
   //3. Graph
-  Charts.prototype.graphChart = function (){
-    var highchartsConfig = {
-      title: {
-        text: 'Average retail gas prices'
+  Charts.prototype.graphChart=function(){
+    var chatsConfig = {
+      title:{
+        text: "Hong Kong Mobile cellular subscriptions"
       },
       subtitle: {
-        text: 'Bureau of Transportation Statistics (Multimodal)'
+        text: "per-100-people"
       },
       xAxis: {
         type: 'datetime'
       },
       series: [
         {
-          name: 'US',
-          data: this.graphData.reverse()
+        name: 'Date',
+        data: this.graphData.reverse()
         }
       ]
     };
 
-    $('#chart').highcharts(highchartsConfig);
+    $('#chart').highcharts(chatsConfig);
+
   };
-
-  //2.1 instanstanziate
-  var chart = new Charts();
-  chart.makeAjaxRequest();
-
-
-});
+  //1.2 instance 
+  var chart = new Charts ();
+  chart.makeAjaxRequest(); //1.3 call makeAjaxRequest
+}); // end of doc ready
